@@ -61,8 +61,19 @@ void toggle_LD6() {
 	// set 30 bit position
 	*GPIO_D_mode |= (1 << 30);
 
-	// setting 15 bit position of GPIO D o/p data, controlled by PD15
-	*GPIO_D_output_data |= (1 << 15);
+	while(1) {
+		// setting 15 bit position of GPIO D o/p data, controlled by PD15
+		*GPIO_D_output_data |= (1 << 15);
+
+		// creating software delay by running a loop ... not very efficient
+		for(int i=0; i<200000; i++);
+
+		// clearing 15 bit position of GPIO D o/p data, controlled by PD15
+		*GPIO_D_output_data &= ~(1 << 15);
+
+		// creating software delay by running a loop ... not very efficient
+		for(int i=0; i<200000; i++);
+	}
 }
 
 int main(void)
@@ -72,13 +83,9 @@ int main(void)
 	// setting 3rd bit of RCC Clock register to enable GPIO D peripheral
 	*RCC_clock |= (1 << 3);
 
-    /* Loop forever */
-	for(int i=0; i < 5; i++) {
-		toggle_LD3();
-		toggle_LD4();
-		toggle_LD5();
-		toggle_LD6();
+	toggle_LD3();
+	toggle_LD4();
+	toggle_LD5();
+	toggle_LD6(); // forever/super loop inside this method, no need to add here
 
-		//sleep(5);
-	}
 }
